@@ -15,23 +15,40 @@ class Program
         IPAddress ip = IPAddress.Parse("127.0.0.1");
         int port = 13000;
         TcpClient client = new TcpClient();
-        client.Connect(ip, port);
-        NetworkStream ns = client.GetStream();
-        Thread thread = new Thread(o => ReceiveData((TcpClient)o));
-        thread.Start(client);
-        string goodbyeString = "пока";
-        string s;
-        while (!string.IsNullOrEmpty((s = Console.ReadLine())))
+        NetworkStream stream = null;
+        Thread thread = null;
+        try
         {
-            byte[] buffer = Encoding.UTF8.GetBytes(s);
-            ns.Write(buffer, 0, buffer.Length);
-            if (s == goodbyeString)
-                break;
+            client.Connect(ip, port);
+            stream = client.GetStream();
+            thread = new Thread(o => ReceiveData((TcpClient) o));
+            thread.Start(client);
+            string goodbyeString = "пока";
+            string s;
+            while (!string.IsNullOrEmpty((s = Console.ReadLine())))
+            {
+                byte[] buffer = Encoding.UTF8.GetBytes(s);
+                stream.Write(buffer, 0, buffer.Length);
+                if (s == goodbyeString)
+                    break;
+            }
         }
-        client.Client.Shutdown(SocketShutdown.Both);
-        thread.Join();
-        ns.Close();
-        client.Close();
+        catch (SocketException e)
+        {
+            Console.WriteLine("Соединение с ботом отсутствует");
+            //Console.WriteLine("SocketException: {0}", e);
+            Console.ReadKey();
+        }
+        finally
+        {
+            if (client.Connected)
+            {
+                client.Client.Shutdown(SocketShutdown.Both);
+                thread.Join();
+                stream.Close();
+                client.Close();
+            }
+        }
     }
 
     static void ReceiveData(TcpClient client)

@@ -24,12 +24,12 @@ namespace ChatBot
         public Server(string ip, int port)
         {
             var lines = File.ReadAllLines(@"questions.txt").Select(x => x.Split(';')).ToList();
-            for (int i = 0; i < lines.Count; i ++)
+            for (int i = 0; i < lines.Count; i++)
             {
                 questionsAndAnswers.Add(lines[i][0], lines[i][1]);
             }
             lines = File.ReadAllLines(@"commands.txt").Select(x => x.Split(';')).ToList();
-            for (int i = 0; i < lines.Count; i ++)
+            for (int i = 0; i < lines.Count; i++)
             {
                 commands.Add(lines[i][0], lines[i][1]);
             }
@@ -76,10 +76,10 @@ namespace ChatBot
                 {
                     var question = Encoding.UTF8.GetString(bytes, 0, i);
                     Regex rgx = new Regex("[^a-zA-Zа-яА-Я0-9 -]");
-                    question = Regex.Replace(rgx.Replace(question, ""), @"\s+"," ").Trim().ToLower();
+                    question = Regex.Replace(rgx.Replace(question, ""), @"\s+", " ").Trim().ToLower();
                     if (question == goodbyeString) break;
                     CreateAndSendAnswer(chatClient, question, ref isFirstAnswer);
-                }             
+                }
             }
             catch (Exception e)
             {
@@ -93,7 +93,7 @@ namespace ChatBot
             }
         }
 
-        private void CreateAndSendAnswer(ChatClient chatClient, string question,ref bool isFirstAnswer)
+        private void CreateAndSendAnswer(ChatClient chatClient, string question, ref bool isFirstAnswer)
         {
             var stream = chatClient.Client.GetStream();
             if (!isFirstAnswer)
@@ -114,15 +114,15 @@ namespace ChatBot
             {
                 isFirstAnswer = false;
                 chatClient.Name = question.First().ToString().ToUpper() + question.Substring(1);
-                string answer = helloString +"\r\n";
+                string answer = helloString + Environment.NewLine;
                 foreach (var (key, _) in questionsAndAnswers)
                 {
-                    answer += key.First().ToString().ToUpper() + key.Substring(1) + "?\r\n";
+                    answer += key.First().ToString().ToUpper() + key.Substring(1) + "?" + Environment.NewLine;
                 }
-                answer += "\r\n";
+                answer += Environment.NewLine;
                 foreach (var (key, value) in commands)
                 {
-                    answer += "Введи " + key + ", чтобы " + value + "\r\n";
+                    answer += $"Введи {key}, чтобы {value}" + Environment.NewLine;
                 }
                 Answer(stream, answer);
             }
