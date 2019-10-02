@@ -115,15 +115,9 @@ namespace ChatBot
                 isFirstAnswer = false;
                 chatClient.Name = question.First().ToString().ToUpper() + question.Substring(1);
                 string answer = helloString + Environment.NewLine;
-                foreach (var (key, _) in questionsAndAnswers)
-                {
-                    answer += key.First().ToString().ToUpper() + key.Substring(1) + "?" + Environment.NewLine;
-                }
-                answer += Environment.NewLine;
-                foreach (var (key, value) in commands)
-                {
-                    answer += $"Введи {key}, чтобы {value}" + Environment.NewLine;
-                }
+                answer += string.Join(Environment.NewLine, questionsAndAnswers.Keys.Select(key => key.First().ToString().ToUpper() + key.Substring(1) + "?"));
+                answer += Environment.NewLine + Environment.NewLine;
+                answer += string.Join(Environment.NewLine, commands.ToList().Select(pair => $"Введи {pair.Key}, чтобы {pair.Value}"));
                 Answer(stream, answer);
             }
         }

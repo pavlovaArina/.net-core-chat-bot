@@ -59,7 +59,7 @@ class Program
 
         while ((byteCount = ns.Read(receivedBytes, 0, receivedBytes.Length)) > 0)
         {
-            Console.WriteLine(Encoding.UTF8.GetString(receivedBytes, 0, byteCount));            
+            Console.WriteLine(Encoding.UTF8.GetString(receivedBytes, 0, byteCount));
         }
     }
 }
