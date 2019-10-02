@@ -76,7 +76,7 @@ namespace ChatBot
                 {
                     var question = Encoding.UTF8.GetString(bytes, 0, i);
                     Regex rgx = new Regex("[^a-zA-Zа-яА-Я0-9 -]");
-                    question = rgx.Replace(question.ToLower(), "");
+                    question = Regex.Replace(rgx.Replace(question, ""), @"\s+"," ").Trim().ToLower();
                     if (question == goodbyeString) break;
                     CreateAndSendAnswer(chatClient, question, ref isFirstAnswer);
                 }             
